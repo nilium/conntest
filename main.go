@@ -62,7 +62,7 @@ func main() {
 		go func() {
 			defer wg.Done()
 			if err := makeConns(ctx, conn, *numConns, *timeout); err != nil {
-				log.Printf("Failed to create connection %s: %v", conn, err)
+				log.Print(err)
 				cancel()
 			}
 		}()
@@ -117,9 +117,13 @@ func makeConns(ctx context.Context, conn string, numConns int, timeout time.Dura
 
 		c, err := dialer.DialContext(dialctx, network, addr)
 		if err != nil {
+			err = fmt.Errorf("%s: Connection %d failed: %v", conn, id, err)
 			select {
-			case errs <- fmt.Errorf("%s: Connection %d failed: %v", conn, id, err):
+			case errs <- err:
 			case <-ctx.Done():
+				if verbose {
+					log.Print(err)
+				}
 			}
 			cancel()
 			down.Done()
@@ -143,7 +147,6 @@ func makeConns(ctx context.Context, conn string, numConns int, timeout time.Dura
 
 	select {
 	case err := <-errs:
-		log.Print(err)
 		return err
 	default:
 		return nil
