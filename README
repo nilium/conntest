@@ -1,0 +1,39 @@
+conntest
+========
+
+conntest is a small tool to test whether a server / socket will accept
+up to a number of simultaneous connections.
+
+
+Installation
+------------
+
+Currently, conntest can be installed using the 'go' tool:
+
+    $ go get go.spiff.io/conntest
+
+This will place it in your GOBIN (default: $GOPATH/bin or ~/go/bin).
+
+
+Usage
+-----
+
+conntest [OPTIONS] [ADDR]
+
+ADDR may be any IPv4, IPv6 address:port pair, or a network::addr, such
+as tcp::127.0.0.1:80 or unix::path/to/unix.sock.
+
+If any connection fails, conntest exits with status 1.
+
+OPTIONS:
+-v       Verbose connection output.
+-n CONNS Number of connections to open per ADDR. (default: 1)
+-t TTL   Connection timeout. (default: 1s)
+-T TTL   Execution timeout. (default: 0 [none])
+
+
+License
+-------
+
+conntest is licensed under the ISC license.
+You can read a copy of the license in the COPYING file.
